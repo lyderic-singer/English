@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { words } from './en2';
+import { verbs } from './irr';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ import { words } from './en2';
   styleUrls: ['./app.scss']
 })
 export class App {
-  private dictionary: { [key: string]: string } = words;
+  private dictionary: { [key: string]: string } = verbs;
   private remainingWords: string[] = [];
   private wrongWords: string[] = [];
   private usedWords: Set<string> = new Set();
