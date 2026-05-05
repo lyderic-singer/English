@@ -16,6 +16,8 @@ export class App {
   private dictionary: { [key: string]: string } = verbs;
   private remainingWords: string[] = [];
   private wrongWords: string[] = [];
+  private retryQueue: { word: string, delay: number }[] = [];
+  private turn: number = 0;
   private usedWords: Set<string> = new Set();
   
   currentWord: string = '';
@@ -45,6 +47,16 @@ export class App {
     }
   }
 
+  private processRetryQueue(): void {
+    this.turn++;
+    this.retryQueue.forEach(item => item.delay--);
+    const ready = this.retryQueue.filter(i => i.delay <= 0).map(i => i.word);
+    this.retryQueue = this.retryQueue.filter(i => i.delay > 0);
+    if (ready.length > 0) {
+      this.remainingWords.unshift(...ready);
+    }
+  }
+
   private getRandomWord(): string {
     if (this.reviewMode && this.wrongWords.length > 0) {
       const index = Math.floor(Math.random() * this.wrongWords.length);
@@ -61,6 +73,7 @@ export class App {
   }
 
   nextWord(): void {
+    this.processRetryQueue();
     this.currentWord = this.getRandomWord();
     this.userAnswer = '';
     this.feedback = '';
@@ -90,9 +103,10 @@ export class App {
       this.feedbackType = 'wrong';
       this.feedback = `✗ "${this.dictionary[this.currentWord]}"`;
       this.wrongCount++;
-      if (!this.wrongWords.includes(this.currentWord)) {this.wrongWords.push(this.currentWord); }
-      if (!this.reviewMode && this.remainingWords.length > 0) {this.remainingWords.shift(); }
-      setTimeout(() => this.nextWord(), 2000);
+      this.retryQueue.push({ word: this.currentWord, delay: 1 });
+      this.retryQueue.push({ word: this.currentWord, delay: 3 });
+      if (!this.reviewMode && this.remainingWords.length > 0) this.remainingWords.shift();
+      setTimeout(() => this.nextWord(), 1200);
     }
   }
 
