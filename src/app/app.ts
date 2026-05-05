@@ -2,8 +2,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { words } from './en2';
-import { verbs } from './irr';
+import { words } from './words/en2';
+import { verbs, medium, hard } from './words/irr';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,7 @@ import { verbs } from './irr';
   styleUrls: ['./app.scss']
 })
 export class App {
-  private dictionary: { [key: string]: string } = verbs;
+  private dictionary: { [key: string]: string } = hard;
   private remainingWords: string[] = [];
   private wrongWords: string[] = [];
   private retryQueue: { word: string, delay: number }[] = [];
